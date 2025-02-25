@@ -4,12 +4,13 @@ import { koaBody } from 'koa-body';
 import Router from 'koa-router';
 import jwt from 'jsonwebtoken';
 import { client } from './db.js';
-import signup from './routers/signup.js';
-import login from './routers/login.js';
+import createUser from './routers/createUser.js';
+import getToken from './routers/getToken.js';
 import createAlbum from './routers/createAlbum.js';
 import getAlbum from './routers/getAlbum.js';
 import deleteAlbum from './routers/deleteAlbum.js';
 import updateAlbum from './routers/updateAlbum.js';
+import getUser from './routers/getUser.js';
 
 dotenv.config();
 
@@ -41,8 +42,9 @@ router.get('/', (ctx, next) => {
   ctx.body = { };
 });
 
-router.post('/signup', signup);
-router.post('/login', login);
+router.post('/users', createUser);
+router.get('/users/:id', authorize, getUser);
+router.post('/token', getToken);
 router.post('/album', authorize, createAlbum);
 router.get('/album', authorize, getAlbum);
 router.delete('/album/:id', authorize, deleteAlbum);

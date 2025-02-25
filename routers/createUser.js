@@ -1,6 +1,7 @@
 import { db } from '../db.js';
 import Ajv from 'ajv';
 import addErrors from 'ajv-errors';
+import bcrypt from 'bcryptjs';
 
 const ajv = new Ajv({ allErrors: true, useDefaults: true, coerceTypes: true });
 
@@ -9,7 +10,7 @@ addErrors(ajv);
 const schema = {
   type: 'object',
   properties: {
-    username: { 
+    name: { 
       type: 'string', 
       minLength: 6, 
       maxLength: 64,
@@ -30,11 +31,11 @@ const schema = {
       },
     },
   },
-  required: ['username', 'password'], 
+  required: ['name', 'password'], 
   additionalProperties: false,
   errorMessage: {
     required: {
-      username: '请输入用户名！',
+      name: '请输入用户名！',
       password: '请输入密码！',
     },
     additionalProperties: '不允许额外的字段！',
@@ -42,6 +43,8 @@ const schema = {
 };
 
 const validate = ajv.compile(schema);
+
+// TODO: 限制用户名只能由字母和数字组成。
 
 export default async (ctx, next) => {
   try {
@@ -55,16 +58,21 @@ export default async (ctx, next) => {
     return;
   }
 
-  const { username, password } = ctx.request.body;
+  const { name, password } = ctx.request.body;
 
-  const collection = db.collection('user');
-  const user = await collection.findOne({ username });
+  const collection = db.collection('users');
+  const user = await collection.findOne({ name });
 
   if (user) {
     ctx.status = 409;
     ctx.body = { msg: '用户已存在！' };
   } else {
-    await collection.insertOne({ username, password });
+    const salt = bcrypt.genSaltSync(10);
+    const hash = bcrypt.hashSync(password, salt);
+    await collection.insertOne({ 
+      name, 
+      password: hash, 
+    });
     ctx.status = 201;
     ctx.body = {msg: '创建成功！'};
   }
