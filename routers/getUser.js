@@ -17,7 +17,7 @@ export default async (ctx, next) => {
 
   if (user) {
     delete user.password;
-    ctx.body = { msg: "成功！", user };
+    ctx.body = { msg: "成功！", data: user };
   } else {
     ctx.status = 404;
     ctx.body = { msg: "用户不存在！" };

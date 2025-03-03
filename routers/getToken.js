@@ -25,7 +25,7 @@ export default async (ctx, next) => {
         name, 
         id: user._id.toString(), 
       }, process.env.JWT_SECRET_KEY);
-      ctx.body = { msg: '获取成功！', token };
+      ctx.body = { msg: '获取成功！', data: token };
     } else {
       ctx.status = 401;
       ctx.body = { msg: '密码错误！' };
