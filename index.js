@@ -14,6 +14,7 @@ import updateAlbum from './routers/updateAlbum.js';
 import getUser from './routers/getUser.js';
 import updateUser from './routers/updateUser.js';
 import getAlbum from './routers/getAlbum.js';
+import uploadPhotos from './routers/uploadPhotos.js';
 
 dotenv.config();
 
@@ -59,14 +60,15 @@ router.get('/', (ctx, next) => {
 });
 
 router.post('/users', createUser);
-router.get('/users/:id', authorize, getUser);
 router.post('/token', getToken);
+router.get('/users/:id', authorize, getUser);
+router.put('/users/:id', authorize, updateUser);
 router.post('/albums', authorize, createAlbum);
 router.get('/albums', authorize, getAlbums);
 router.delete('/albums/:id', authorize, deleteAlbum);
 router.put('/albums/:id', authorize, updateAlbum);
-router.put('/users/:id', authorize, updateUser);
 router.get('/albums/:id', authorize, getAlbum);
+router.post('/photos', authorize, uploadPhotos)
 
 app
   .use(router.routes())
