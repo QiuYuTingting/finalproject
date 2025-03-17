@@ -15,6 +15,7 @@ import getUser from './routers/getUser.js';
 import updateUser from './routers/updateUser.js';
 import getAlbum from './routers/getAlbum.js';
 import uploadPhotos from './routers/uploadPhotos.js';
+import getPhoto from './routers/getPhoto.js';
 
 dotenv.config();
 
@@ -38,6 +39,20 @@ async function authorize(ctx, next) {
     return;
   }
   
+  await next();
+}
+
+async function authorizeByCookie(ctx, next) {
+  const token = ctx.cookies.get('token');
+  try {
+    ctx.tokenPayload = jwt.verify(token, process.env.JWT_SECRET_KEY);
+    ctx.tokenPayload.userId = ObjectId.createFromHexString(ctx.tokenPayload.id);
+  } catch (err) {
+    ctx.status = 302;
+    ctx.redirect('/login');
+    return;
+  }
+
   await next();
 }
 
@@ -69,6 +84,7 @@ router.delete('/albums/:id', authorize, deleteAlbum);
 router.put('/albums/:id', authorize, updateAlbum);
 router.get('/albums/:id', authorize, getAlbum);
 router.post('/photos', authorize, uploadPhotos)
+router.get('/photo/:id', authorizeByCookie, getPhoto);
 
 app
   .use(router.routes())

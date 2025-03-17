@@ -25,6 +25,15 @@ export default async (ctx, next) => {
         name, 
         id: user._id.toString(), 
       }, process.env.JWT_SECRET_KEY);
+
+      ctx.cookies.set('token', token, {
+        httpOnly: true,
+        // secure: true, // 仅 HTTPS 传输
+        maxAge: 1000 * 60 * 60 * 24,
+        sameSite: 'strict',
+        overwrite: true,
+      });
+
       ctx.body = { msg: '获取成功！', data: token };
     } else {
       ctx.status = 401;

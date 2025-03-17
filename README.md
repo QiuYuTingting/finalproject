@@ -24,8 +24,8 @@
 | POST   | `/photos`             | 上传照片 |
 | DELETE | `/photos/{id}`         | 删除照片 |
 | PUT    | `/photos/{id}`         | 修改照片信息（例如备注） |
-| GET    | `/photos/{id}`         | 获取照片信息 |
 | GET    | `/photos?q={query}`    | 查询照片列表 |
+| GET    | `/photo/{id}`         | 获取照片 |
 | POST   | `/albums/{id}/photos` | 上传照片到相册 |
 | GET    | `/albums/{id}/photos` | 获取相册的照片列表 |
 

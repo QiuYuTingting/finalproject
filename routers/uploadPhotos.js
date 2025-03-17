@@ -67,14 +67,14 @@ export default async (ctx, next) => {
 
     const task = collection.insertOne({
       size,
-      filepathSegments: path.normalize(filepath).split(path.sep).slice(-3), // Will get ['2025', '0121', 'xxx.png'] etc.
+      filepath_segments: path.normalize(filepath).split(path.sep).slice(-3), // Will get ['2025', '0121', 'xxx.png'] etc.
       filename: newFilename,
       mimetype,
       mtime,
-      originalFilename,
+      original_filename: originalFilename,
       hash,
       metadata,
-      uploaderId: ctx.tokenPayload?.id,
+      user_id: ctx.tokenPayload?.userId,
     });
 
     tasks.push(task);
