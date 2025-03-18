@@ -1,13 +1,9 @@
 import { ObjectId } from 'mongodb';
 import { db } from '../db.js';
-//TODO BSONError: input must be a 24 character hex string, 12 byte Uint8Array, or an integer
+
+// TODO: 等待重构
 export default async (ctx, next) => {
   const { id } = ctx.params;
-  if (!id || typeof id !== 'string') {
-    ctx.status = 400;
-    ctx.body = { msg: '请输入相册id！' };
-    return;
-  }
 
   const { name } = ctx.request.body;
   if (!name || typeof name !== 'string') {

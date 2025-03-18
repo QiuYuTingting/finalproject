@@ -6,12 +6,6 @@ import { ObjectId } from 'mongodb';
 export default async (ctx, next) => {
   const { id } = ctx.params;
 
-  if (!id || typeof id !== 'string' || id.length !== 24 ) {
-    ctx.status = 400;
-    ctx.body = { msg: '未知图片 id' };
-    return;
-  }
-
   const collection = db.collection('photos');
 
   const photo = await collection.findOne({

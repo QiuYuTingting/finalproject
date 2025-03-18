@@ -5,6 +5,7 @@ import { ObjectId } from 'mongodb';
 import Router from 'koa-router';
 import jwt from 'jsonwebtoken';
 import { client } from './db.js';
+import { validateParamsId } from './middlewares/validateParamsId.js';
 import createUser from './routers/createUser.js';
 import getToken from './routers/getToken.js';
 import createAlbum from './routers/createAlbum.js';
@@ -76,15 +77,15 @@ router.get('/', (ctx, next) => {
 
 router.post('/users', createUser);
 router.post('/token', getToken);
-router.get('/users/:id', authorize, getUser);
-router.put('/users/:id', authorize, updateUser);
+router.get('/users/:id', authorize, validateParamsId(), getUser);
+router.put('/users/:id', authorize, validateParamsId(), updateUser);
 router.post('/albums', authorize, createAlbum);
 router.get('/albums', authorize, getAlbums);
-router.delete('/albums/:id', authorize, deleteAlbum);
-router.put('/albums/:id', authorize, updateAlbum);
-router.get('/albums/:id', authorize, getAlbum);
+router.delete('/albums/:id', authorize, validateParamsId(), deleteAlbum);
+router.put('/albums/:id', authorize, validateParamsId(), updateAlbum);
+router.get('/albums/:id', authorize, validateParamsId(), getAlbum);
 router.post('/photos', authorize, uploadPhotos)
-router.get('/photo/:id', authorizeByCookie, getPhoto);
+router.get('/photo/:id', authorizeByCookie, validateParamsId(), getPhoto);
 
 app
   .use(router.routes())

@@ -1,5 +1,6 @@
 import { db } from '../db.js';
 
+// TODO: 等待重构
 export default async (ctx, next) => {
   const { id } = ctx.request.params;
 

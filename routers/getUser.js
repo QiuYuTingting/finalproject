@@ -2,18 +2,8 @@ import { db } from '../db.js';
 import { ObjectId } from 'mongodb';
 
 export default async (ctx, next) => {
-  let useId;
-
-  try {
-    useId = ObjectId.createFromHexString(ctx.params.id);
-  } catch (err) {
-    ctx.status = 400;
-    ctx.body = { msg: err.message };
-    return;
-  }
-
   const collection = db.collection('users');
-  const user = await collection.findOne({ _id: useId });
+  const user = await collection.findOne({ _id: ObjectId.createFromHexString(ctx.params.id) });
 
   if (user) {
     delete user.password;
