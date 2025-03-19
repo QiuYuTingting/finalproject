@@ -10,24 +10,25 @@
 
 | Method | Path | 说明 |
 | --- | --- | --- |
-| POST   | `/users`              | 创建用户（即注册） |
+| POST   | `/users`               | 创建用户（即注册） |
+| GET    | `/users/me`            | 获取用户自己的信息 |
 | DELETE | `/users/{id}`          | 删除用户（即注销） |
 | PUT    | `/users/{id}`          | 修改用户信息 |
-| GET    | `/users/{id}`          | 获取用户信息 |
-| GET    | `/users?q={query}`     | 查询用户列表 |
-| POST   | `/token`              | 获取令牌（即登录） |
-| POST   | `/albums`             | 创建相册 |
+| GET    | `/users/{id}`          | 获取用户信息（仅管理员使用） |
+| GET    | `/users?q={query}`     | 查询用户列表（仅管理员使用） |
+| POST   | `/token`               | 获取令牌（即登录） |
+| POST   | `/albums`              | 创建相册 |
 | DELETE | `/albums/{id}`         | 删除相册 |
 | PUT    | `/albums/{id}`         | 修改相册信息 |
 | GET    | `/albums/{id}`         | 获取相册信息 |
 | GET    | `/albums?q={query}`    | 查询相册列表 |
-| POST   | `/photos`             | 上传照片 |
+| POST   | `/photos`              | 上传照片 |
 | DELETE | `/photos/{id}`         | 删除照片 |
 | PUT    | `/photos/{id}`         | 修改照片信息（例如备注） |
 | GET    | `/photos?q={query}`    | 查询照片列表 |
-| GET    | `/photo/{id}`         | 获取照片 |
-| POST   | `/albums/{id}/photos` | 上传照片到相册 |
-| GET    | `/albums/{id}/photos` | 获取相册的照片列表 |
+| GET    | `/photo/{id}`          | 获取照片 |
+| POST   | `/albums/{id}/photos`  | 上传照片到相册 |
+| GET    | `/albums/{id}/photos`  | 获取相册的照片列表 |
 
 > 备注：没有 `DELETE /albums/{id}/photos/{photo_id}` 这样嵌套过深的接口，因为如果你已经得到了某个照片的id，直接调用上面的 `DELETE /photos/{id}` 即可。
 

@@ -17,6 +17,7 @@ import updateUser from './routers/updateUser.js';
 import getAlbum from './routers/getAlbum.js';
 import uploadPhotos from './routers/uploadPhotos.js';
 import getPhoto from './routers/getPhoto.js';
+import getMe from './routers/getMe.js';
 
 dotenv.config();
 
@@ -77,6 +78,7 @@ router.get('/', (ctx, next) => {
 
 router.post('/users', createUser);
 router.post('/token', getToken);
+router.get('/users/me', authorize, getMe); // 不能放在 GET /users/:id 之后
 router.get('/users/:id', authorize, validateParamsId(), getUser);
 router.put('/users/:id', authorize, validateParamsId(), updateUser);
 router.post('/albums', authorize, createAlbum);
