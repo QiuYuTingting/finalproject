@@ -14,13 +14,13 @@ export default async (ctx, next) =>{
   }
 
   const collection = db.collection('albums');
-  const album = await collection.findOne({ name, user_id: ctx.tokenPayload?.userId });
+  const album = await collection.findOne({ name, user_id: ctx.state.currentUser?._id });
 
   if (album) {
     ctx.status = 409;
     ctx.body = { msg: `相册 ${name} 已存在！` };
   } else {
-    await collection.insertOne({ name, user_id: ctx.tokenPayload?.userId });
+    await collection.insertOne({ name, user_id: ctx.state.currentUser?._id });
     ctx.status = 201;
     ctx.body = { msg: '创建成功！' };
   }

@@ -4,7 +4,7 @@ import { db } from '../db.js';
 export default async (ctx, next) => {
   const { id } = ctx.request.params;
 
-  if (id !== ctx.tokenPayload.id) {
+  if (id !== ctx.state.currentUser?.id) {
     ctx.status = 403;
     ctx.body = { msg: `你没有权限修改此用户 ${id} 信息！` };
     return;
@@ -21,7 +21,7 @@ export default async (ctx, next) => {
   const collection = db.collection('users');
 
   const result = await collection.updateOne(
-    { _id: ctx.tokenPayload.userId },
+    { _id: ctx.state.currentUser?._id },
     { $set: updateData },
   );
 

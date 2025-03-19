@@ -9,7 +9,7 @@ export default async (ctx, next) => {
   const collection = db.collection('photos');
 
   const photo = await collection.findOne({
-    user_id: ctx.tokenPayload?.userId,
+    user_id: ctx.state.currentUser?._id,
     _id: ObjectId.createFromHexString(id),
   });
 

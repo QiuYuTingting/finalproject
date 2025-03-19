@@ -18,7 +18,10 @@ export default async (ctx, next) => {
 
   const collection = db.collection('album');
   const result = await collection.updateOne(
-    { _id: new ObjectId(id), user_id: ctx.tokenPayload?.id }, 
+    {
+      _id: new ObjectId(id),
+      user_id: ctx.state.currentUser?._id,
+    },
     { $set: { name } } 
   );
   if (result.matchedCount) {

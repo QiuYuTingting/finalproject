@@ -6,7 +6,7 @@ export default async (ctx, next) => {
 
   const collection = db.collection('albums');
   const album = await collection.findOne({ 
-    user_id: ctx.tokenPayload?.userId, 
+    user_id: ctx.state.currentUser?._id,
     _id: ObjectId.createFromHexString(id), 
   });
 

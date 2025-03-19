@@ -74,7 +74,7 @@ export default async (ctx, next) => {
       original_filename: originalFilename,
       hash,
       metadata,
-      user_id: ctx.tokenPayload?.userId,
+      user_id: ctx.state.currentUser?._id,
     });
 
     tasks.push(task);

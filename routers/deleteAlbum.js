@@ -7,7 +7,7 @@ export default async (ctx, next) => {
   const collection = db.collection('albums');
 
   const result = await collection.deleteOne({ 
-    user_id: ctx.tokenPayload?.userId, 
+    user_id: ctx.state.currentUser?._id,
     _id: ObjectId.createFromHexString(id),
   });
   

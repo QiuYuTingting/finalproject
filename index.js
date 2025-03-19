@@ -26,15 +26,23 @@ var router = new Router();
 
 async function authorize(ctx, next) {
   const authorization = ctx.headers['authorization'];
+
   if (!authorization) {
     ctx.status = 401;
     ctx.body = { msg: '未授权！' };
     return;
   }
+
   const token = authorization.split(' ')[1];
+
   try {
-    ctx.tokenPayload = jwt.verify(token, process.env.JWT_SECRET_KEY);
-    ctx.tokenPayload.userId = ObjectId.createFromHexString(ctx.tokenPayload.id);
+    const { name, id } = jwt.verify(token, process.env.JWT_SECRET_KEY);
+
+    ctx.state.currentUser = {
+      name,
+      id,
+      _id: ObjectId.createFromHexString(id),
+    };
   } catch (err) {
     ctx.status = 401;
     ctx.body = { msg: '未授权！' };
@@ -46,9 +54,15 @@ async function authorize(ctx, next) {
 
 async function authorizeByCookie(ctx, next) {
   const token = ctx.cookies.get('token');
+
   try {
-    ctx.tokenPayload = jwt.verify(token, process.env.JWT_SECRET_KEY);
-    ctx.tokenPayload.userId = ObjectId.createFromHexString(ctx.tokenPayload.id);
+    const { name, id } = jwt.verify(token, process.env.JWT_SECRET_KEY);
+
+    ctx.state.currentUser = {
+      name,
+      id,
+      _id: ObjectId.createFromHexString(id),
+    };
   } catch (err) {
     ctx.status = 302;
     ctx.redirect('/login');
