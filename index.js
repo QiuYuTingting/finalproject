@@ -1,11 +1,11 @@
 import dotenv from 'dotenv';
 import Koa from 'koa';
 import { koaBody } from 'koa-body';
-import { ObjectId } from 'mongodb';
 import Router from 'koa-router';
-import jwt from 'jsonwebtoken';
 import { client } from './db.js';
 import { validateParamsId } from './middlewares/validateParamsId.js';
+import { authorize } from './middlewares/authorize.js';
+import { authorizeByCookie } from './middlewares/authorizeByCookie.js';
 import createUser from './routers/createUser.js';
 import getToken from './routers/getToken.js';
 import createAlbum from './routers/createAlbum.js';
@@ -23,54 +23,6 @@ dotenv.config();
 
 var app = new Koa();
 var router = new Router();
-
-async function authorize(ctx, next) {
-  const authorization = ctx.headers['authorization'];
-
-  if (!authorization) {
-    ctx.status = 401;
-    ctx.body = { msg: '未授权！' };
-    return;
-  }
-
-  const token = authorization.split(' ')[1];
-
-  try {
-    const { name, id } = jwt.verify(token, process.env.JWT_SECRET_KEY);
-
-    ctx.state.currentUser = {
-      name,
-      id,
-      _id: ObjectId.createFromHexString(id),
-    };
-  } catch (err) {
-    ctx.status = 401;
-    ctx.body = { msg: '未授权！' };
-    return;
-  }
-  
-  await next();
-}
-
-async function authorizeByCookie(ctx, next) {
-  const token = ctx.cookies.get('token');
-
-  try {
-    const { name, id } = jwt.verify(token, process.env.JWT_SECRET_KEY);
-
-    ctx.state.currentUser = {
-      name,
-      id,
-      _id: ObjectId.createFromHexString(id),
-    };
-  } catch (err) {
-    ctx.status = 302;
-    ctx.redirect('/login');
-    return;
-  }
-
-  await next();
-}
 
 async function cors(ctx, next) {
   ctx.set('Access-Control-Allow-Origin', '*');
@@ -92,16 +44,16 @@ router.get('/', (ctx, next) => {
 
 router.post('/users', createUser);
 router.post('/token', getToken);
-router.get('/users/me', authorize, getMe); // 不能放在 GET /users/:id 之后
-router.get('/users/:id', authorize, validateParamsId(), getUser);
-router.put('/users/:id', authorize, validateParamsId(), updateUser);
-router.post('/albums', authorize, createAlbum);
-router.get('/albums', authorize, getAlbums);
-router.delete('/albums/:id', authorize, validateParamsId(), deleteAlbum);
-router.put('/albums/:id', authorize, validateParamsId(), updateAlbum);
-router.get('/albums/:id', authorize, validateParamsId(), getAlbum);
-router.post('/photos', authorize, uploadPhotos)
-router.get('/photo/:id', authorizeByCookie, validateParamsId(), getPhoto);
+router.get('/users/me', authorize(), getMe); // 不能放在 GET /users/:id 之后
+router.get('/users/:id', authorize(), validateParamsId(), getUser);
+router.put('/users/:id', authorize(), validateParamsId(), updateUser);
+router.post('/albums', authorize(), createAlbum);
+router.get('/albums', authorize(), getAlbums);
+router.delete('/albums/:id', authorize(), validateParamsId(), deleteAlbum);
+router.put('/albums/:id', authorize(), validateParamsId(), updateAlbum);
+router.get('/albums/:id', authorize(), validateParamsId(), getAlbum);
+router.post('/photos', authorize(), uploadPhotos)
+router.get('/photo/:id', authorizeByCookie(), validateParamsId(), getPhoto);
 
 app
   .use(router.routes())
