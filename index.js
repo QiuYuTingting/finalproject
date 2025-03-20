@@ -6,6 +6,7 @@ import { client } from './db.js';
 import { validateParamsId } from './middlewares/validateParamsId.js';
 import { authorize } from './middlewares/authorize.js';
 import { authorizeByCookie } from './middlewares/authorizeByCookie.js';
+import { corsForDevelopment } from './middlewares/corsForDevelopment.js';
 import createUser from './routers/createUser.js';
 import getToken from './routers/getToken.js';
 import createAlbum from './routers/createAlbum.js';
@@ -17,6 +18,7 @@ import updateUser from './routers/updateUser.js';
 import getAlbum from './routers/getAlbum.js';
 import uploadPhotos from './routers/uploadPhotos.js';
 import getPhoto from './routers/getPhoto.js';
+import getPhotos from './routers/getPhotos.js';
 import getMe from './routers/getMe.js';
 
 dotenv.config();
@@ -24,17 +26,7 @@ dotenv.config();
 var app = new Koa();
 var router = new Router();
 
-async function cors(ctx, next) {
-  ctx.set('Access-Control-Allow-Origin', '*');
-  ctx.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-  ctx.set('Access-Control-Allow-Credentials', 'true');
-  ctx.set('Access-Control-Max-Age', '86400');
-  ctx.set('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-  
-  await next();
-} 
-
-app.use(cors);
+app.use(corsForDevelopment());
 
 app.use(koaBody());
 
@@ -52,7 +44,8 @@ router.get('/albums', authorize(), getAlbums);
 router.delete('/albums/:id', authorize(), validateParamsId(), deleteAlbum);
 router.put('/albums/:id', authorize(), validateParamsId(), updateAlbum);
 router.get('/albums/:id', authorize(), validateParamsId(), getAlbum);
-router.post('/photos', authorize(), uploadPhotos)
+router.post('/photos', authorize(), uploadPhotos);
+router.get('/photos', authorize(), getPhotos);
 router.get('/photo/:id', authorizeByCookie(), validateParamsId(), getPhoto);
 
 app

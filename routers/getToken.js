@@ -26,13 +26,22 @@ export default async (ctx, next) => {
         id: user._id.toString(), 
       }, process.env.JWT_SECRET_KEY);
 
-      ctx.cookies.set('token', token, {
-        httpOnly: true,
-        // secure: true, // 仅 HTTPS 传输
-        maxAge: 1000 * 60 * 60 * 24,
-        sameSite: 'strict',
-        overwrite: true,
-      });
+      if (process.env.NODE_ENV !== 'development') {
+        ctx.cookies.set('token', token, {
+          httpOnly: true,
+          secure: true, // 仅 HTTPS 传输
+          maxAge: 1000 * 60 * 60 * 24,
+          sameSite: 'strict', // 不允许跨域传输 cookie
+          overwrite: true,
+        });
+      } else {
+        // 方便开发阶段调试
+        ctx.cookies.set('token', token, {
+          httpOnly: true,
+          maxAge: 1000 * 60 * 60 * 24,
+          overwrite: true,
+        });
+      }
 
       ctx.body = { msg: '获取成功！', data: token };
     } else {
