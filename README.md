@@ -96,3 +96,19 @@ if (permission === PERMISSIONS.VIEW_REPORTS) {
 ### 管理员
 
 在本系统的设计中，为了保持简单，仅允许有一个管理员。管理员使用特殊字段标识（例如，`is_admin: true`），无需对应任何角色，只要系统识别到此特殊字段，则任何权限控制逻辑都对其放行。
+
+## 照片的客户端缓存策略
+
+浏览器在加载图片时，建议使用 HTTP 缓存机制，用于减少不必要的请求、提高性能。
+
+- Cache-Control 控制缓存行为；
+- ETag 和 Last-Modified 进行缓存校验；
+
+在我们的设计中，将用户上传的照片视为不可变资源，则 `GET /photo/{id}` 服务这样设置请求头即可：
+
+```js
+// immutable 告诉浏览器此资源永远不会变
+ctx.set('Cache-Control', 'public, max-age=31536000, immutable');
+```
+
+当照片被编辑时，原图不会被覆盖，而是将编辑后的版本另存为一个新文件。

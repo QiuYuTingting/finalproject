@@ -23,6 +23,7 @@ export default async (ctx, next) => {
 
   const filepath = path.join(process.env.FILE_UPLOAD_DIR, ...filepath_segments);
 
+  ctx.set('Cache-Control', 'public, max-age=31536000, immutable');
   ctx.type = mimetype;
   ctx.body = fs.createReadStream(filepath);
 };
