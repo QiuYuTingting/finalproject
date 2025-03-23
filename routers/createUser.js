@@ -1,6 +1,11 @@
 import { db } from '../db.js';
 import bcrypt from 'bcryptjs';
 
+/**
+ * 创建用户（即注册）
+ * @param  {string} ctx.request.body.name 用户名
+ * @param  {string} ctx.request.body.password 密码
+ */
 export default async (ctx, next) => {
   const { name, password } = ctx.request.body;
 

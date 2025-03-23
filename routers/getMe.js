@@ -1,8 +1,8 @@
-import { db } from '../db.js';
-
+/**
+ * 获取当前用户（调用者）自己的信息
+ */
 export default async (ctx, next) => {
-  const collection = db.collection('users');
-  const user = await collection.findOne({ _id: ctx.state.currentUser?._id });
+  const user = structuredClone(ctx.state.currentUser || null);
 
   if (user) {
     delete user.password;

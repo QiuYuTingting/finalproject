@@ -82,7 +82,6 @@ export default async (ctx, next) => {
 
   await Promise.all(tasks);
 
-  // TODO: 如何处理进度显示、上传失败等情况
   ctx.status = 201;
   ctx.body = { msg: '上传成功' };
 }

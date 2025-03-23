@@ -7,6 +7,7 @@ import { validateParamsId } from './middlewares/validateParamsId.js';
 import { authorize } from './middlewares/authorize.js';
 import { authorizeByCookie } from './middlewares/authorizeByCookie.js';
 import { corsForDevelopment } from './middlewares/corsForDevelopment.js';
+import { getCurrentUser } from './middlewares/getCurrentUser.js';
 import createUser from './routers/createUser.js';
 import getToken from './routers/getToken.js';
 import createAlbum from './routers/createAlbum.js';
@@ -36,7 +37,7 @@ router.get('/', (ctx, next) => {
 
 router.post('/users', createUser);
 router.post('/token', getToken);
-router.get('/users/me', authorize(), getMe); // 不能放在 GET /users/:id 之后
+router.get('/users/me', authorize(), getCurrentUser(), getMe); // 不能放在 GET /users/:id 之后
 router.get('/users/:id', authorize(), validateParamsId(), getUser);
 router.put('/users/:id', authorize(), validateParamsId(), updateUser);
 router.post('/albums', authorize(), createAlbum);

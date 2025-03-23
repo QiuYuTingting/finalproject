@@ -1,8 +1,11 @@
 import { ObjectId } from 'mongodb';
 
-// 验证路径参数中 id 的格式是否合法。
-// 默认验证 ctx.params.id；可以通过参数指定验证其它属性，例如：
-// 调用 validateParamsId('user_id') 则会验证 ctx.params.user_id
+/**
+ *
+ * 验证路径参数中 id 的格式是否合法；默认验证 ctx.params.id；
+ * @param  {String} idPropName 指定验证 ctx.params[idPropName] 属性
+ * @examples `validateParamsId('user_id')` // 验证 ctx.params.user_id 的格式是否合法
+ */
 export function validateParamsId(idPropName = 'id') {
   return async (ctx, next) => {
     const id = ctx.params[idPropName];
