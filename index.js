@@ -21,6 +21,7 @@ import uploadPhotos from './routers/uploadPhotos.js';
 import getPhoto from './routers/getPhoto.js';
 import getPhotos from './routers/getPhotos.js';
 import getMe from './routers/getMe.js';
+import patchPhotos from './routers/patchPhotos.js';
 
 dotenv.config();
 
@@ -39,13 +40,14 @@ router.post('/users', createUser);
 router.post('/token', getToken);
 router.get('/users/me', authorize(), getCurrentUser(), getMe); // 不能放在 GET /users/:id 之后
 router.get('/users/:id', authorize(), validateParamsId(), getUser);
-router.put('/users/:id', authorize(), validateParamsId(), updateUser);
+router.patch('/users', authorize(), updateUser);
 router.post('/albums', authorize(), createAlbum);
 router.get('/albums', authorize(), getAlbums);
 router.delete('/albums/:id', authorize(), validateParamsId(), deleteAlbum);
-router.put('/albums/:id', authorize(), validateParamsId(), updateAlbum);
+router.patch('/albums', authorize(), updateAlbum);
 router.get('/albums/:id', authorize(), validateParamsId(), getAlbum);
 router.post('/photos', authorize(), uploadPhotos);
+router.patch('/photos', authorize(), patchPhotos);
 router.get('/photos', authorize(), getPhotos);
 router.get('/photo/:id', authorizeByCookie(), validateParamsId(), getPhoto);
 
