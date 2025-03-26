@@ -75,6 +75,6 @@ export default async (ctx, next) => {
 
   ctx.body = {
     msg: `匹配到 ${result.matchedCount} 个记录；更新了 ${result.modifiedCount} 个记录。`,
-    data: {},
+    data: result,
   };
 };

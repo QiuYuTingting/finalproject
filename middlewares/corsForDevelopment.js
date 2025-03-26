@@ -11,7 +11,7 @@ export function corsForDevelopment() {
   // 开发环境为了方便调试，设置一些请求头以允许跨域请求
   return async (ctx, next) => {
     ctx.set('Access-Control-Allow-Origin', process.env.CORS_ORIGIN);
-    ctx.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS'); // 允许 OPTIONS 预检很重要
+    ctx.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS, PATCH'); // 允许 OPTIONS 预检很重要
     ctx.set('Access-Control-Allow-Credentials', 'true'); // 允许跨域的前端携带 Cookie
     ctx.set('Access-Control-Max-Age', '86400');
     ctx.set('Access-Control-Allow-Headers', 'Content-Type, Authorization'); // 允许跨域的前端发送的请求头
