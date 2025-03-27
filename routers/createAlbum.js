@@ -1,5 +1,9 @@
 import { db } from '../db.js';
 
+/**
+ * 创建相册
+ * @param  {string} ctx.request.body.name 相册名
+ */
 export default async (ctx, next) =>{
   const { name } = ctx.request.body;
 
@@ -20,9 +24,17 @@ export default async (ctx, next) =>{
     ctx.status = 409;
     ctx.body = { msg: `相册 ${name} 已存在！` };
   } else {
-    await collection.insertOne({ name, user_id: ctx.state.currentUser?._id });
+    const result = await collection.insertOne({
+      name,
+      user_id: ctx.state.currentUser?._id,
+      created_at: new Date(),
+    });
+
     ctx.status = 201;
-    ctx.body = { msg: '创建成功！' };
+    ctx.body = {
+      msg: '创建成功！',
+      data: result,
+    };
   }
 
 }
