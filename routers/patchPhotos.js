@@ -5,7 +5,6 @@ const ALLOWED_FIELDS_MAP = new Map([
   [
     'status',
     (v) => {
-      console.log('正在校验 status 字段', v);
       const validStatus = [null, 'trashed', 'deleted'];
       if (!validStatus.includes(v)) {
         throw new Error(`status 必须是 null${ validStatus.join(', ') } 中的一个`);
@@ -66,7 +65,8 @@ export default async (ctx, next) => {
 
   const result = await db.collection('photos').updateMany(
     {
-      _id: { $in: ids.map((id) => ObjectId.createFromHexString(id)) }
+      _id: { $in: ids.map((id) => ObjectId.createFromHexString(id)) },
+      user_id: ctx.state.currentUser?._id,
     },
     {
       $set: validUpdates,

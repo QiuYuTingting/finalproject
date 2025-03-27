@@ -22,6 +22,7 @@ import getPhoto from './routers/getPhoto.js';
 import getPhotos from './routers/getPhotos.js';
 import getMe from './routers/getMe.js';
 import patchPhotos from './routers/patchPhotos.js';
+import deleteTrashedPhotos from './routers/deleteTrashedPhotos.js';
 
 dotenv.config();
 
@@ -49,6 +50,7 @@ router.get('/albums/:id', authorize(), validateParamsId(), getAlbum);
 router.post('/photos', authorize(), uploadPhotos);
 router.patch('/photos', authorize(), patchPhotos);
 router.get('/photos', authorize(), getPhotos);
+router.delete('/photos/trashed', authorize(), deleteTrashedPhotos);
 router.get('/photo/:id', authorizeByCookie(), validateParamsId(), getPhoto);
 
 app
