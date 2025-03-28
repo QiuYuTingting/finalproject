@@ -1,16 +1,23 @@
+import { db } from '../db.js';
+
 /**
  * 获取当前用户（调用者）自己的信息
  */
 export default async (ctx, next) => {
-  const user = structuredClone(ctx.state.currentUser || null);
+  const collection = db.collection('users');
 
-  if (user) {
-    delete user.password;
-    delete user._id;
+  const user = await collection.findOne({ _id: ctx.state.currentUser?._id });
 
-    ctx.body = { msg: "获取用户信息成功！", data: user };
-  } else {
+  if (!user) {
     ctx.status = 404;
     ctx.body = { msg: "用户不存在！" };
+    return;
   }
+
+  delete user.password;
+
+  ctx.body = {
+    msg: "获取用户信息成功！",
+    data: user,
+  };
 }

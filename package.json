@@ -8,6 +8,7 @@
   "type": "module",
   "scripts": {
     "dev": "nodemon index.js",
+    "setup": "node setup.js",
     "serve": "node index.js"
   },
   "dependencies": {

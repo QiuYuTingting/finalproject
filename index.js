@@ -2,12 +2,11 @@ import dotenv from 'dotenv';
 import Koa from 'koa';
 import { koaBody } from 'koa-body';
 import Router from 'koa-router';
-import { client } from './db.js';
+import { shutdown } from './db.js';
 import { validateParamsId } from './middlewares/validateParamsId.js';
 import { authorize } from './middlewares/authorize.js';
 import { authorizeByCookie } from './middlewares/authorizeByCookie.js';
 import { corsForDevelopment } from './middlewares/corsForDevelopment.js';
-import { getCurrentUser } from './middlewares/getCurrentUser.js';
 import createUser from './routers/createUser.js';
 import getToken from './routers/getToken.js';
 import createAlbum from './routers/createAlbum.js';
@@ -23,7 +22,6 @@ import getPhotos from './routers/getPhotos.js';
 import getMe from './routers/getMe.js';
 import patchPhotos from './routers/patchPhotos.js';
 import deleteTrashedPhotos from './routers/deleteTrashedPhotos.js';
-import getUserByPassword from './routers/getUserByPassword.js';
 
 dotenv.config();
 
@@ -40,8 +38,7 @@ router.get('/', (ctx, next) => {
 
 router.post('/users', createUser);
 router.post('/token', getToken);
-router.post('/users/authenticate', getUserByPassword); // 不能放在 GET /users/:id 之后
-router.get('/users/me', authorize(), getCurrentUser(), getMe); // 不能放在 GET /users/:id 之后
+router.get('/users/me', authorize(), getMe); // 不能放在 GET /users/:id 之后
 router.get('/users/:id', authorize(), validateParamsId(), getUser);
 router.patch('/users', authorize(), updateUser);
 router.post('/albums', authorize(), createAlbum);
@@ -60,11 +57,6 @@ app
   .use(router.allowedMethods());
 
 app.listen(3000);
-
-async function shutdown() {
-  await client.close();
-  process.exit(0);
-}
 
 process.on('SIGINT', shutdown);
 process.on('SIGTERM', shutdown);

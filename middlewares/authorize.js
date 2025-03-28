@@ -13,11 +13,12 @@ export function authorize() {
     const token = authorization?.split(' ')[1];
 
     try {
-      const { name, id } = jwt.verify(token, process.env.JWT_SECRET_KEY);
+      const { name, id, is_admin } = jwt.verify(token, process.env.JWT_SECRET_KEY);
 
       ctx.state.currentUser = {
         name,
         id,
+        is_admin,
         _id: ObjectId.createFromHexString(id),
       };
     } catch (err) {

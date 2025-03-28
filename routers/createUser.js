@@ -30,10 +30,14 @@ export default async (ctx, next) => {
   } else {
     const salt = bcrypt.genSaltSync(10);
     const hash = bcrypt.hashSync(password, salt);
+
     await collection.insertOne({ 
-      name, 
-      password: hash, 
+      name,
+      password: hash,
+      created_at: new Date(),
+      update_at: new Date(),
     });
+
     ctx.status = 201;
     ctx.body = {msg: '创建成功！'};
   }
