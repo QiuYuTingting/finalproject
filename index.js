@@ -23,6 +23,7 @@ import getPhotos from './routers/getPhotos.js';
 import getMe from './routers/getMe.js';
 import patchPhotos from './routers/patchPhotos.js';
 import deleteTrashedPhotos from './routers/deleteTrashedPhotos.js';
+import getUserByPassword from './routers/getUserByPassword.js';
 
 dotenv.config();
 
@@ -39,6 +40,7 @@ router.get('/', (ctx, next) => {
 
 router.post('/users', createUser);
 router.post('/token', getToken);
+router.post('/users/authenticate', getUserByPassword); // 不能放在 GET /users/:id 之后
 router.get('/users/me', authorize(), getCurrentUser(), getMe); // 不能放在 GET /users/:id 之后
 router.get('/users/:id', authorize(), validateParamsId(), getUser);
 router.patch('/users', authorize(), updateUser);
