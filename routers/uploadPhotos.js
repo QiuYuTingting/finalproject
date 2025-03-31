@@ -5,6 +5,35 @@ import formidable from 'formidable';
 import sharp from 'sharp';
 import { db } from '../db.js';
 
+// 从 sharp 库的 metadata 方法返回值中选择一部分元数据
+// https://sharp.pixelplumbing.com/api-input#metadata
+const ALLOWED_METADATA_KEYS = new Set([
+  'format',
+  'size',
+  'width',
+  'height',
+  'space',
+  'channels',
+  'depth',
+  'density',
+  'chromaSubsampling',
+  'isProgressive',
+  'pages',
+  'pageHeight',
+  'paletteBitDepth',
+  'loop',
+  'delay',
+  'pagePrimary',
+  'levels',
+  'subifds',
+  'background',
+  'compression',
+  'resolutionUnit',
+  'hasProfile',
+  'hasAlpha',
+  'formatMagick',
+]);
+
 function parseForm(req) {
   const uploadDir = path.join(process.env.FILE_UPLOAD_DIR, dayjs().format('YYYY/MMDD'));
   fs.mkdirSync(uploadDir, { recursive: true });
@@ -60,7 +89,10 @@ export default async (ctx, next) => {
 
     let metadata = null;
     try {
-      metadata = await sharp(filepath).metadata();
+      const metadataRaw = await sharp(filepath).metadata();
+      metadata = Object.fromEntries(
+        Object.entries(metadataRaw).filter(([key]) => ALLOWED_METADATA_KEYS.has(key))
+      );
     } catch (e) {
       console.error(e);
     }

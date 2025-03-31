@@ -22,6 +22,9 @@ import getPhotos from './routers/getPhotos.js';
 import getMe from './routers/getMe.js';
 import patchPhotos from './routers/patchPhotos.js';
 import deleteTrashedPhotos from './routers/deleteTrashedPhotos.js';
+import getPeople from './routers/getPeople.js';
+import getPerson from './routers/getPerson.js';
+import patchPeople from './routers/patchPeople.js';
 
 dotenv.config();
 
@@ -51,6 +54,9 @@ router.patch('/photos', authorize(), patchPhotos);
 router.get('/photos', authorize(), getPhotos);
 router.delete('/photos/trashed', authorize(), deleteTrashedPhotos);
 router.get('/photo/:id', authorizeByCookie(), validateParamsId(), getPhoto);
+router.get('/people', authorize(), getPeople);
+router.get('/people/:id', authorize(), validateParamsId(), getPerson);
+router.patch('/people', authorize(), patchPeople);
 
 app
   .use(router.routes())
