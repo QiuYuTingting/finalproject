@@ -18,13 +18,17 @@ function parseDate(dateString) {
  *   - 'trashed': 获取所有移至回收站中的照片（回收站中的照片status字段为'trashed'）；例如 `?mode=trashed`
  *   - 'default': 获取所有正常状态的照片（未移至回收站且未软删除）
  *   - 不传递mode参数则视为default
- * - person_id: 人物id。查询包含某个特定人物的照片。
+ * - person_id: 人物id。查询包含某个特定人物的照片
+ * - album_id: 相册id。查询在某个特定相册中的照片
+ * - exclude_album: 要排除的相册的id；一旦指定，返回结果中将不会包含此相册中的照片
  */
 export default async (ctx, next) => {
   // 解析查询参数
   const pageSize = Math.abs(parseInt(ctx.query.pagesize)) || 50;
   const lastMtime = parseDate(ctx.query.cursor);
   const personId = ObjectId.isValid(ctx.query.person_id) ? ObjectId.createFromHexString(ctx.query.person_id) : '';
+  const albumId = ObjectId.isValid(ctx.query.album_id) ? ObjectId.createFromHexString(ctx.query.album_id) : '';
+  const excludeAlbumId = ObjectId.isValid(ctx.query.exclude_album) ? ObjectId.createFromHexString(ctx.query.exclude_album) : '';
   const queryMode = ['all', 'trashed'].includes(ctx.query.mode)
     ? ctx.query.mode
     : 'default';
@@ -39,6 +43,20 @@ export default async (ctx, next) => {
         who: personId,
         distance_from_who: { $lt: 0.5 }
       }
+    };
+  }
+
+  if (albumId) {
+    query.albums = { $in: [albumId] };
+  }
+
+  if (excludeAlbumId) {
+    query.albums = {
+      $not: {
+        $elemMatch: {
+          $eq: excludeAlbumId,
+        }
+      },
     };
   }
 

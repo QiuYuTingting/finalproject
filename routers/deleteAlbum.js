@@ -3,6 +3,7 @@ import { db } from '../db.js';
 
 /**
  * 删除相册
+ * TODO: 删除相册需要维护 photos 表
  * @param  {string}   ctx.params.id 要删除的相册的id
  */
 export default async (ctx, next) => {

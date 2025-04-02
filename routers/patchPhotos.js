@@ -9,6 +9,22 @@ const ALLOWED_FIELDS_MAP = new Map([
       if (!validStatus.includes(v)) {
         throw new Error(`status 必须是 null${ validStatus.join(', ') } 中的一个`);
       }
+      return {
+        $set: { status: v },
+      };
+    },
+  ],
+  [
+    'albums__append_one',
+    (v) => {
+      if (!ObjectId.isValid(v)) {
+        throw new Error('相册 id 格式不合法！');
+      }
+      return {
+        $addToSet: {
+          albums: ObjectId.createFromHexString(v),
+        },
+      };
     },
   ],
 ]);
@@ -43,7 +59,7 @@ export default async (ctx, next) => {
     return;
   }
 
-  const validUpdates = {};
+  const updateOptions = {};
 
   for (const [field, value] of Object.entries(updates)) {
     if (!ALLOWED_FIELDS_MAP.has(field)) {
@@ -54,8 +70,18 @@ export default async (ctx, next) => {
 
     try {
       const validator = ALLOWED_FIELDS_MAP.get(field);
-      validator(value);
-      validUpdates[field] = updates[field];
+      const operation = validator(value);
+      // operation 示例 1:
+      // {
+      //   $set: { status: 'trashed' }
+      // }
+      // operation 示例 2:
+      // {
+      //   $addToSet: { albums: 'xxx' }
+      // }
+      for (const [opKey, opValue] of Object.entries(operation)) {
+        updateOptions[opKey] = Object.assign(updateOptions[opKey] || {}, opValue);
+      }
     } catch (e) {
       ctx.status = 400;
       ctx.body = { msg: e.message };
@@ -68,9 +94,7 @@ export default async (ctx, next) => {
       _id: { $in: ids.map((id) => ObjectId.createFromHexString(id)) },
       user_id: ctx.state.currentUser?._id,
     },
-    {
-      $set: validUpdates,
-    }
+    updateOptions,
   );
 
   ctx.body = {
