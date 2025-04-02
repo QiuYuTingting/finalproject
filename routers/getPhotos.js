@@ -34,10 +34,12 @@ export default async (ctx, next) => {
   };
 
   if (personId) {
-    // personId 是 ObjectId 类型
-    // photos 表的记录中，有字段 faces: [{ who: ObjectId('xxx')}, ... ]
-    // 我的需求：只要 faces 中存在一个 face 的 who 属性和 personId 匹配，则添加到查询结果中
-    query['faces.who'] = personId;
+    query.faces = {
+      $elemMatch: {
+        who: personId,
+        distance_from_who: { $lt: 0.5 }
+      }
+    };
   }
 
   if (queryMode === 'all') {
