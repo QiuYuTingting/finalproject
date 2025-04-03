@@ -41,7 +41,7 @@ export default async (ctx, next) => {
     query.faces = {
       $elemMatch: {
         who: personId,
-        distance_from_who: { $lt: 0.5 }
+        // distance_from_who: { $lt: 0.5 }
       }
     };
   }

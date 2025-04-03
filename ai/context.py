@@ -7,6 +7,11 @@ import cv2
 import base64
 import numpy as np
 from pymongo import MongoClient
+from dotenv import load_dotenv
+
+
+# 加载 .env 文件
+load_dotenv(dotenv_path = "../.env")
 
 
 def connect_db():
@@ -21,8 +26,8 @@ def connect_db():
 
 
 def photo_path(filepath_segments = []):
-    BASE_PATH = r"C:\Users\wesle\AppData\Local\QiuYuTingFinalProject\uploads" # 照片的基础路径
-    return os.path.join(BASE_PATH, *filepath_segments)
+    base_path = os.getenv("FILE_UPLOAD_DIR") # 照片的基础路径
+    return os.path.join(base_path, *filepath_segments)
 
 
 def image_area_to_base64(image_path, x, y, w, h, target_width = 112):

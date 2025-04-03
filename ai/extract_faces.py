@@ -45,6 +45,9 @@ def who_is(collections, user_id, face_base64, confidence):
     ObjectId格式的人物id，以及两者的距离
     或者 None
     """
+    min_distance = 1 # 最小的距离表示最像的人物
+    person_id = None # 最像的人物的id
+
     for person in collections['people'].find({ "user_id": user_id }):
         result = DeepFace.verify(
             img1_path = base64_to_numpy(person.get("reference_face_base64", "")),
@@ -53,6 +56,10 @@ def who_is(collections, user_id, face_base64, confidence):
         )
 
         if result.get("verified"):
+            if (result.get("distance") < min_distance):
+                min_distance = result.get("distance")
+                person_id = person["_id"]
+
             if confidence > person.get("reference_face_confidence", 0): # 如果新人脸的置信度比原参照人脸的置信度更高
                 # 用新的人脸替换当前人物的参照人脸
                 collections['people'].update_one(
@@ -65,12 +72,11 @@ def who_is(collections, user_id, face_base64, confidence):
                     },
                 )
 
-                return person["_id"], 0
+    if (min_distance > 0.9): # 如果距离大于阈值，视为未找到相似的人脸
+        person_id = None
+        min_distance = None
 
-            else:
-                return person["_id"], result.get("distance")
-
-    return None, None
+    return person_id, min_distance
 
 
 def process_user_photo(collections, user_id, photo):
