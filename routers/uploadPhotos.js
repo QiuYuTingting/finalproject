@@ -65,7 +65,6 @@ export default async (ctx, next) => {
 
     photos = files.photos;
   } catch (e) {
-    // TODO: 使用 ctx.throw 方法更优雅的向前端返回异常（多处需要更改）
     console.error(e);
     ctx.status = 400;
     ctx.body = { msg: e.message };
@@ -82,7 +81,7 @@ export default async (ctx, next) => {
       newFilename,
       mimetype,
       mtime,
-      // length, // TODO: undefined ?
+      length,
       originalFilename,
       hash,
     } = photo.toJSON(); // [formidable] interface File

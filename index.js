@@ -12,9 +12,7 @@ import getToken from './routers/getToken.js';
 import createAlbum from './routers/createAlbum.js';
 import getAlbums from './routers/getAlbums.js';
 import deleteAlbum from './routers/deleteAlbum.js';
-import updateAlbum from './routers/updateAlbum.js';
 import getUser from './routers/getUser.js';
-import updateUser from './routers/updateUser.js';
 import getAlbum from './routers/getAlbum.js';
 import uploadPhotos from './routers/uploadPhotos.js';
 import getPhoto from './routers/getPhoto.js';
@@ -26,6 +24,8 @@ import getPeople from './routers/getPeople.js';
 import getPerson from './routers/getPerson.js';
 import patchPeople from './routers/patchPeople.js';
 import getPhotoRecord from './routers/getPhotoRecord.js';
+import patchAlbums from './routers/patchAlbums.js';
+import patchUsers from './routers/patchUsers.js';
 
 dotenv.config();
 
@@ -44,12 +44,12 @@ router.post('/users', createUser);
 router.post('/token', getToken);
 router.get('/users/me', authorize(), getMe); // 不能放在 GET /users/:id 之后
 router.get('/users/:id', authorize(), validateParamsId(), getUser);
-router.patch('/users', authorize(), updateUser);
+router.patch('/users', authorize(), patchUsers);
 router.post('/albums', authorize(), createAlbum);
 router.get('/albums', authorize(), getAlbums);
 router.get('/albums/:id', authorize(), validateParamsId(), getAlbum);
 router.delete('/albums/:id', authorize(), validateParamsId(), deleteAlbum);
-router.patch('/albums', authorize(), updateAlbum);
+router.patch('/albums', authorize(), patchAlbums);
 router.post('/photos', authorize(), uploadPhotos);
 router.patch('/photos', authorize(), patchPhotos);
 router.get('/photos', authorize(), getPhotos);

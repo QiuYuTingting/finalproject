@@ -38,17 +38,25 @@ export default async (ctx, next) => {
     return;
   }
 
-  const token = jwt.sign({
-    name: user.name,
-    id: user._id.toString(),
-    is_admin: !!user.is_admin,
-  }, process.env.JWT_SECRET_KEY);
+  const ONE_DAY = 1000 * 60 * 60 * 24;
+
+  const token = jwt.sign(
+    {
+      name: user.name,
+      id: user._id.toString(),
+      is_admin: !!user.is_admin,
+    },
+    process.env.JWT_SECRET_KEY,
+    {
+      expiresIn: ONE_DAY,
+    }
+  );
 
   if (process.env.NODE_ENV !== 'development') {
     ctx.cookies.set('token', token, {
       httpOnly: true,
       secure: true, // 仅 HTTPS 传输
-      maxAge: 1000 * 60 * 60 * 24,
+      maxAge: ONE_DAY,
       sameSite: 'strict', // 不允许跨域传输 cookie
       overwrite: true,
     });
@@ -56,7 +64,7 @@ export default async (ctx, next) => {
     // 方便开发阶段调试
     ctx.cookies.set('token', token, {
       httpOnly: true,
-      maxAge: 1000 * 60 * 60 * 24,
+      maxAge: ONE_DAY,
       overwrite: true,
     });
   }

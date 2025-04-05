@@ -1,5 +1,6 @@
 import { db } from '../db.js';
 import { ObjectId } from 'mongodb';
+import { getBaseUrl } from '../utils/getBaseUrl.js';
 
 /**
  * 获取照片详情
@@ -21,12 +22,7 @@ export default async (ctx, next) => {
     return;
   }
 
-  // 获取当前服务的域名
-  const host = ctx.request.get('X-Forwarded-Host') || ctx.request.host;
-  const protocol = ctx.request.get('X-Forwarded-Proto') || ctx.request.protocol;
-  const baseUrl = `${protocol}://${host}`;
-
-  photo.src = `${baseUrl}/photo/${photo._id}`
+  photo.src = getBaseUrl(ctx);
 
   ctx.body = {
     msg: '获取成功！',

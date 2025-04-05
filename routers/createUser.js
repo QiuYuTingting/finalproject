@@ -35,7 +35,6 @@ export default async (ctx, next) => {
       name,
       password: hash,
       created_at: new Date(),
-      update_at: new Date(),
     });
 
     ctx.status = 201;

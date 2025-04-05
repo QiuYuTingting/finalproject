@@ -1,12 +1,13 @@
 import { db } from '../db.js';
 import { ObjectId } from 'mongodb';
+import { getBaseUrl } from '../utils/getBaseUrl.js';
 
 export default async (ctx, next) => {
   const { id } = ctx.params;
 
-  const collection = db.collection('albums');
+  const albumsCollection = db.collection('albums');
 
-  const album = await collection.findOne({ 
+  const album = await albumsCollection.findOne({
     user_id: ctx.state.currentUser?._id,
     _id: ObjectId.createFromHexString(id), 
   });
@@ -15,6 +16,12 @@ export default async (ctx, next) => {
     ctx.status = 404;
     ctx.body = { msg: `相册 ${id} 不存在` };
     return;
+  }
+
+  const photosCollection = db.collection('photos');
+  const coverPhoto = await photosCollection.findOne({ albums: album._id });
+  if (coverPhoto) {
+    album.cover = `${getBaseUrl(ctx)}/photo/${coverPhoto._id}`;
   }
 
   ctx.body = { 

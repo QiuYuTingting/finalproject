@@ -1,5 +1,6 @@
 import { db } from '../db.js';
 import { ObjectId } from 'mongodb';
+import { getBaseUrl } from '../utils/getBaseUrl.js';
 
 function parseDate(dateString) {
   const date = new Date(dateString);
@@ -101,15 +102,10 @@ export default async (ctx, next) => {
 
   const nextCursor = photos.length ? photos.at(-1).mtime : null;
 
-  // 获取当前服务的域名
-  const host = ctx.request.get('X-Forwarded-Host') || ctx.request.host;
-  const protocol = ctx.request.get('X-Forwarded-Proto') || ctx.request.protocol;
-  const baseUrl = `${protocol}://${host}`;
-
   ctx.body = {
     msg: '获取成功！',
     data: photos.map((v) => {
-      v.src = `${baseUrl}/photo/${v._id}`;
+      v.src = `${getBaseUrl(ctx)}/photo/${v._id}`;
       return v;
     }),
     cursor: nextCursor,
