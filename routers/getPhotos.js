@@ -1,11 +1,7 @@
 import { db } from '../db.js';
 import { ObjectId } from 'mongodb';
 import { getBaseUrl } from '../utils/getBaseUrl.js';
-
-function parseDate(dateString) {
-  const date = new Date(dateString);
-  return isNaN(date.getTime()) ? null : date;
-}
+import { parseDateString } from '../utils/parseDateString.js';
 
 /**
  * 获取用户的照片列表
@@ -26,7 +22,7 @@ function parseDate(dateString) {
 export default async (ctx, next) => {
   // 解析查询参数
   const pageSize = Math.abs(parseInt(ctx.query.pagesize)) || 50;
-  const lastMtime = parseDate(ctx.query.cursor);
+  const lastMtime = parseDateString(ctx.query.cursor);
   const personId = ObjectId.isValid(ctx.query.person_id) ? ObjectId.createFromHexString(ctx.query.person_id) : '';
   const albumId = ObjectId.isValid(ctx.query.album_id) ? ObjectId.createFromHexString(ctx.query.album_id) : '';
   const excludeAlbumId = ObjectId.isValid(ctx.query.exclude_album) ? ObjectId.createFromHexString(ctx.query.exclude_album) : '';

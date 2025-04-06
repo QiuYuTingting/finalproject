@@ -5,6 +5,7 @@ import Router from 'koa-router';
 import { shutdown } from './db.js';
 import { validateParamsId } from './middlewares/validateParamsId.js';
 import { authorize } from './middlewares/authorize.js';
+import { permission } from './middlewares/permission.js';
 import { authorizeByCookie } from './middlewares/authorizeByCookie.js';
 import { corsForDevelopment } from './middlewares/corsForDevelopment.js';
 import createUser from './routers/createUser.js';
@@ -26,6 +27,7 @@ import patchPeople from './routers/patchPeople.js';
 import getPhotoRecord from './routers/getPhotoRecord.js';
 import patchAlbums from './routers/patchAlbums.js';
 import patchUsers from './routers/patchUsers.js';
+import getUsers from './routers/getUsers.js';
 
 dotenv.config();
 
@@ -44,6 +46,7 @@ router.post('/users', createUser);
 router.post('/token', getToken);
 router.get('/users/me', authorize(), getMe); // 不能放在 GET /users/:id 之后
 router.get('/users/:id', authorize(), validateParamsId(), getUser);
+router.get('/users', authorize(), permission('admin-only'), getUsers);
 router.patch('/users', authorize(), patchUsers);
 router.post('/albums', authorize(), createAlbum);
 router.get('/albums', authorize(), getAlbums);
