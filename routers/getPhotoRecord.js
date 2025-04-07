@@ -22,7 +22,7 @@ export default async (ctx, next) => {
     return;
   }
 
-  photo.src = getBaseUrl(ctx);
+  photo.src = `${getBaseUrl(ctx)}/photo/${photo._id}`;
 
   ctx.body = {
     msg: '获取成功！',

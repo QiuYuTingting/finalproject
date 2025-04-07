@@ -60,17 +60,17 @@ def who_is(collections, user_id, face_base64, confidence):
                 min_distance = result.get("distance")
                 person_id = person["_id"]
 
-            if confidence > person.get("reference_face_confidence", 0): # 如果新人脸的置信度比原参照人脸的置信度更高
-                # 用新的人脸替换当前人物的参照人脸
-                collections['people'].update_one(
-                    { "_id": person["_id"] },
-                    {
-                        "$set": {
-                            "reference_face_base64": face_base64,
-                            "reference_face_confidence": confidence,
-                        },
-                    },
-                )
+            # if confidence > person.get("reference_face_confidence", 0): # 如果新人脸的置信度比原参照人脸的置信度更高
+            #     # 用新的人脸替换当前人物的参照人脸
+            #     collections['people'].update_one(
+            #         { "_id": person["_id"] },
+            #         {
+            #             "$set": {
+            #                 "reference_face_base64": face_base64,
+            #                 "reference_face_confidence": confidence,
+            #             },
+            #         },
+            #     )
 
     if (min_distance > 0.9): # 如果距离大于阈值，视为未找到相似的人脸
         person_id = None
@@ -94,7 +94,7 @@ def process_user_photo(collections, user_id, photo):
     )
 
     # 过滤置信度小于 0.9 的人脸
-    extracted_faces = [v for v in extracted_faces if v.get("confidence", 0) >= 0.9]
+    extracted_faces = [v for v in extracted_faces if v.get("confidence", 0) >= 1]
 
     recognized_faces = []
 

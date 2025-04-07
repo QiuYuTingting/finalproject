@@ -14,6 +14,17 @@ const ALLOWED_FIELDS_MAP = new Map([
       };
     },
   ],
+  [
+    'hide',
+    (v) => {
+      if (typeof v !== 'boolean') {
+        throw new Error('hide 属性应该为布尔类型');
+      }
+      return {
+        $set: { hide: v },
+      };
+    },
+  ],
 ]);
 
 /**
